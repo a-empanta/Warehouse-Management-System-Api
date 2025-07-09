@@ -2,25 +2,21 @@ services:
   php:
     build:
       context: .
-      dockerfile: ./php.Dockerfile
+      dockerfile: ./dockerfiles/php.Dockerfile
     image: php_image
     container_name: php_container
     volumes:
       - ./:/app
-      - ~/.ssh:/root/.ssh:ro
     working_dir: /app
     tty: true
 
   nodejs:
     build:
       context: .
-      dockerfile: ./node.Dockerfile
+      dockerfile: ./dockerfiles/node.Dockerfile
     image: nodejs_image
     container_name: nodejs_container
     volumes:
       - ./:/app
     stdin_open: true
     tty: true
-
-volumes:
-  node_volume:

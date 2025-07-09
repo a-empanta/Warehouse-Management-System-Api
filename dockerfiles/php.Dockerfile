@@ -5,7 +5,6 @@ FROM php:8.4-cli
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       git \
-      openssh-client \
       curl \
       zip \
       unzip \
@@ -27,9 +26,6 @@ RUN curl -sS https://getcomposer.org/installer \
 
 # 3. Make sure global composer bin is on PATH
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
-
-# 4. Create SSH folder (you’ll mount your keys there)
-RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 
 # 5. Work in /workspace
 WORKDIR /app
