@@ -39,8 +39,10 @@ Make sure you have the following installed:
 
 ```bash
 make laravel name=your-laravel-project
+```
 
 ### Create a React app
 
 ```bash
 make react name=your-react-project
+```
