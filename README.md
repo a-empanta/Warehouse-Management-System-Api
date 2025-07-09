@@ -1,4 +1,4 @@
-# 🐳 Laravel & React App Generator — with Pure Docker
+# 🐳 Laravel & React App Generator with Pure Docker
 
 This project lets you **create Laravel and React apps** on a Linux system **without installing PHP or Node.js** locally.
 
