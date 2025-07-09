@@ -35,7 +35,12 @@ Make sure you have the following installed:
 
 ## 🛠 Usage
 
-### 🧱 Create a Laravel app
+### Create a Laravel app
 
 ```bash
 make laravel name=your-laravel-project
+
+### Create a React app
+
+```bash
+make react name=your-react-project
