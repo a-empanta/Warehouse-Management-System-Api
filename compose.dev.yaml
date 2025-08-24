@@ -1,0 +1,120 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/development/nginx/Dockerfile
+    container_name: web
+    ports:
+      # Map port 80 inside the container to the port specified by 'NGINX_PORT' on the host machine
+      - "80:80"
+    environment:
+      - NGINX_HOST=localhost
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - warehouse-network
+
+  php-fpm:
+    # For the php-fpm service, we will create a custom image to install the necessary PHP extensions and setup proper permissions.
+    build:
+      context: .
+      dockerfile: ./docker/development/php-fpm/Dockerfile
+      target: development
+      args:
+        XDEBUG_ENABLED: ${XDEBUG_ENABLED:-true}
+        XDEBUG_MODE: develop,coverage,debug,profile
+        XDEBUG_HOST: ${XDEBUG_HOST:-host.docker.internal}
+        XDEBUG_IDE_KEY: ${XDEBUG_IDE_KEY:-DOCKER}
+        XDEBUG_LOG: /dev/stdout
+        XDEBUG_LOG_LEVEL: 0
+    container_name: php-fpm
+    command: >
+      sh -c "
+        php artisan route:clear &&
+        php artisan config:clear &&
+        php artisan cache:clear &&
+        php artisan view:clear &&
+        php-fpm -F
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    env_file:
+      - ./warehouse-api/.env
+    volumes:
+      - ./warehouse-api:/var/www
+    networks:
+      - warehouse-network
+    depends_on:
+      mysql:
+        condition: service_healthy 
+
+  php-cli:
+    build:
+      context: .
+      dockerfile: ./docker/development/php-cli/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+        XDEBUG_ENABLED: ${XDEBUG_ENABLED:-true}
+        XDEBUG_MODE: develop,coverage,debug,profile
+        XDEBUG_HOST: ${XDEBUG_HOST:-host.docker.internal}
+        XDEBUG_IDE_KEY: ${XDEBUG_IDE_KEY:-DOCKER}
+        XDEBUG_LOG: /dev/stdout
+        XDEBUG_LOG_LEVEL: 0
+    container_name: php-cli
+    ports:
+      - '${VITE_PORT:-5172}:5172'
+    tty: true  # Enables an interactive terminal
+    stdin_open: true  # Keeps standard input open for 'docker exec'
+    env_file:
+      - ./warehouse-api/.env
+    volumes:
+      - ./warehouse-api:/var/www
+    networks:
+      - warehouse-network
+
+  mysql:
+    image: mysql:8.3
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3306"
+    env_file:
+      - ./warehouse-api/.env
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+       - mysql-data:/var/lib/mysql
+    networks:
+      - warehouse-network
+    # Health check for MySQL
+    # -----------------------------------------------------------
+    # Health checks allow Docker to determine if a service is operational.
+    # The 'mysqladmin ping' command checks if MySQL is ready to accept connections.
+    # This prevents dependent services from starting before the database is ready.
+    # -----------------------------------------------------------
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-u$MYSQL_USER", "-p$DB_PASSWORD", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    networks:
+      - warehouse-network
+
+networks:
+  warehouse-network:
+
+volumes:
+  mysql-data:
