@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /var/www
 
 # Copy application code
-COPY ./warehouse-api /var/www
+COPY ./warehouse-management-api /var/www
 
 # Install Composer and PHP dependencies
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
@@ -56,7 +56,7 @@ COPY ./docker/development/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy initial storage structure
-COPY ./warehouse-api/storage /var/www/storage-init
+COPY ./warehouse-management-api/storage /var/www/storage-init
 
 # Copy built extensions and config from builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/

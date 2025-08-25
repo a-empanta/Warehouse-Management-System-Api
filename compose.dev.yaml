@@ -45,9 +45,9 @@ services:
       timeout: 5s
       retries: 3
     env_file:
-      - ./warehouse-api/.env
+      - .env
     volumes:
-      - ./warehouse-api:/var/www
+      - ./warehouse-management-api:/var/www
     networks:
       - warehouse-network
     depends_on:
@@ -73,9 +73,9 @@ services:
     tty: true  # Enables an interactive terminal
     stdin_open: true  # Keeps standard input open for 'docker exec'
     env_file:
-      - ./warehouse-api/.env
+      - .env
     volumes:
-      - ./warehouse-api:/var/www
+      - ./warehouse-management-api:/var/www
     networks:
       - warehouse-network
 
@@ -85,8 +85,6 @@ services:
     restart: unless-stopped
     ports:
       - "3306"
-    env_file:
-      - ./warehouse-api/.env
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_PASSWORD=${DB_PASSWORD}
