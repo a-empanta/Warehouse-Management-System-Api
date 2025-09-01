@@ -13,8 +13,17 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('sku')->nullable()->unique();
             $table->string('name')->nullable();
-            $table->string('code')->unique()->nullable();
+            $table->text('description')->nullable();
+            $table->foreignId('category_id')->nullable();
+            $table->integer('reordering_level')->default(0);
+            $table->string('unit_of_measure')->nullable();
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->decimal('length', 8, 2)->nullable();
+            $table->decimal('width', 8, 2)->nullable();
+            $table->decimal('height', 8, 2)->nullable();
+            $table->decimal('cost', 10, 2)->nullable();
             $table->timestamps();
         });
     }

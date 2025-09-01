@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('initial_warehouse_id')->nullable()->constrained('warehouses', 'id')->onDelete('cascade');
             $table->foreignId('destination_warehouse_id')->nullable()->constrained('warehouses', 'id')->onDelete('cascade');
             $table->enum('status', TransferStatusEnum::toArray())->nullable();
+            $table->dateTime('time_completed')->nullable();
             $table->timestamps();
         });
     }
