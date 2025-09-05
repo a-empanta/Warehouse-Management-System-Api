@@ -12,7 +12,14 @@ class Warehouse extends Model
 
     protected $fillable = [
         'name',
-        'location'
+        'coordinates',
+        'address',
+        'city',
+        'country',
+    ];
+
+    protected $casts = [
+        'coordinates' => 'array',
     ];
 
     public function outgoingTransfers(): HasMany

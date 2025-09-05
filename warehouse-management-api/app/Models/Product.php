@@ -12,7 +12,17 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        
+        'sku',
+        'name',
+        'description',
+        'category_id',
+        'reordering_level',
+        'unit_of_measure',
+        'weight',
+        'length',
+        'width',
+        'height',
+        'cost',
     ];
 
     public function stocks(): HasMany

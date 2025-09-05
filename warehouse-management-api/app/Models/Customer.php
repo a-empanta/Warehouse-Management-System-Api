@@ -12,9 +12,16 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = [
-      'user_id', 
-      'address', 
-      'phone'
+        'user_id',
+        'coordinates',
+        'address',
+        'city',
+        'country',
+        'phone',
+    ];
+
+    protected $casts = [
+      'coordinates' => 'array',
     ];
 
     public function orders(): HasMany
