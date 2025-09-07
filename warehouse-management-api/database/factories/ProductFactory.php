@@ -56,7 +56,6 @@ class ProductFactory extends Factory
         } while (in_array($sku, $this->usedSkus));
 
         $this->usedSkus[] = $sku;
-        
 
         return $sku;         
     }
